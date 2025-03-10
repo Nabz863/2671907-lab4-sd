@@ -5,6 +5,7 @@ const secInfo = document.getElementById("country-info");
 const secBorder = document.getElementById("bordering-countries");
 
 btnSubmit.addEventListener("click", async function() {
+    event.preventDefault();
     const strName = txtInput.value.trim();
     if (!strName) {
         displayError("Please enter a country name.");
@@ -25,10 +26,10 @@ btnSubmit.addEventListener("click", async function() {
 });
 
 async function fetchCntryData(country) {
-    const response = await fetch("https://restcountries.com/v3.1/name/${country}?fullText=true");
+    const response = await fetch(`https://restcountries.com/v3.1/name/${country}?fullText=true`);
     if (!response.ok) throw new Error("Country not found.");
     const datData = await response.json();
-    return data[0];
+    return datData[0];
 }
 
 function updateDOM(countryData, neighbours) {
@@ -42,7 +43,7 @@ function updateDOM(countryData, neighbours) {
                         </ul>
                          `;
                          if (neighbours.length === 0) {
-                            secBorder.innerHTML = `<p>No bordering countries.<\p>`;
+                            secBorder.innerHTML = `<p>No bordering countries.</p>`;
                             return;
                          }
     secBorder.innerHTML = `
@@ -50,8 +51,8 @@ function updateDOM(countryData, neighbours) {
                             <li>Bordering Countries:
                             ${neighbours.map(neighbour=> `
                                 <ul>
-                                    <li>${neighbor.name.common}<br>
-                                    <img src="${neighbour.flags.svg}" alt="Flag of ${neighbor.name.common}" width="50"</li>
+                                    <li>${neighbour.name.common}<br>
+                                    <img src="${neighbour.flags.svg}" alt="Flag of ${neighbour.name.common}" width="50"</li>
                                 </ul>
                                 `).join("")}
                         </ul>
