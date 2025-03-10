@@ -4,7 +4,7 @@ const txtInput = document.getElementById("txt");
 const secInfo = document.getElementById("country-info");
 const secBorder = document.getElementById("bordering-countries");
 
-btnSubmit.addEventListener("click", async function() {
+btnSubmit.addEventListener("click", async function(event) {
     event.preventDefault();
     const strName = txtInput.value.trim();
     if (!strName) {
@@ -32,6 +32,13 @@ async function fetchCntryData(country) {
     return datData[0];
 }
 
+async function fetchNbrData(borderCodes) {
+    if (!borderCodes.length) return [];
+    const response = await fetch(`https://restcountries.com/v3.1/alpha?codes=${borderCodes.join(",")}`);
+    if (!response.ok) throw new Error("Bordering countries not found.");
+    return await response.json();
+}
+
 function updateDOM(countryData, neighbours) {
     secInfo.innerHTML = `
                         <ul>
@@ -39,7 +46,7 @@ function updateDOM(countryData, neighbours) {
                          <li>Population: ${countryData.population.toLocaleString()}</li>
                          <li>Region: ${countryData.region}</li>
                          <li>Flag:<br>
-                         <img src="${countryData.flags.svg} alt="${countryData.name.common}" width="150"></li>
+                         <img src="${countryData.flags.svg}" alt="${countryData.name.common}" width="150"></li>
                         </ul>
                          `;
                          if (neighbours.length === 0) {
@@ -52,7 +59,7 @@ function updateDOM(countryData, neighbours) {
                             ${neighbours.map(neighbour=> `
                                 <ul>
                                     <li>${neighbour.name.common}<br>
-                                    <img src="${neighbour.flags.svg}" alt="Flag of ${neighbour.name.common}" width="50"</li>
+                                    <img src="${neighbour.flags.svg}" alt="Flag of ${neighbour.name.common}" width="50"></li>
                                 </ul>
                                 `).join("")}
                         </ul>
@@ -60,7 +67,7 @@ function updateDOM(countryData, neighbours) {
 }
 
 function displayError(message) {
-    secInfo.innerHTML = `<p class="error">${message}</p>`;
+    secInfo.innerHTML = `<p class="error">   ${message}<br></p>`;
     secBorder.innerHTML = "";
 }
 
